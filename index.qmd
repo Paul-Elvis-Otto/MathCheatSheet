@@ -1,5 +1,7 @@
 ---
 title: "Math for data science R cheatsheet"
+author: Paul Elvis Otto 
+date: today
 format: html
 execute:
   freeze: auto
