@@ -407,3 +407,143 @@ cat("Theoretical SD of Y:", sigma / sqrt(n), "\n")
 - Simulation Distribution: The distribution of the simulated means approximates the theoretical mean and variance.
 - Practical Applications: This technique is useful for hypothesis testing, bootstrapping, and exploring variability in statistical models.
 
+
+
+
+# Linear Regression Models and Regularization
+
+This document demonstrates how to fit linear regression models (including interaction and polynomial terms) and perform Lasso and Ridge regularization.
+
+
+## 1. Generating Simulated Data
+
+We simulate a dataset based on the following model:
+$$
+y = 2 + 1.5x_1 - 2x_2 + 0.8x_1x_2 + 1.2x_1^2 + \epsilon
+$$
+where:
+
+- $x_1$ and $x_2$ are predictors drawn from $N(0, 1)$
+- $\epsilon \sim N(0, 1)$ is random noise.
+
+
+### Code:
+
+```{r}
+set.seed(123)
+# Generate data
+n <- 200
+x1 <- rnorm(n, mean = 0, sd = 1)
+x2 <- rnorm(n, mean = 0, sd = 1)
+epsilon <- rnorm(n, mean = 0, sd = 1)
+y <- 2 + 1.5 * x1 - 2 * x2 + 0.8 * x1 * x2 + 1.2 * x1^2 + epsilon
+# Create a data frame
+data <- data.frame(y, x1, x2)
+```
+
+## Fitting a Linear Regression Model
+
+We include interaction $x_1x_2$ and polynomial $x_1^2$ terms in the regression.
+
+
+```{r}
+# Fit linear model with interactions and polynomials
+lm_model <- lm(y ~ x1 + x2 + I(x1 * x2) + I(x1^2), data = data)
+
+# Print summary of the model
+summary(lm_model)
+```
+
+Interpretation:
+	•	Look at the coefficients to assess the relationship between predictors and the response.
+	•	The ( R^2 ) value shows how much variance is explained by the model.
+
+## Adding Regularization: Ridge and Lasso
+
+For regularized regression, we use the glmnet package.
+
+Ridge Regression
+
+Ridge regression minimizes the sum of squared residuals with an added penalty proportional to the sum of squared coefficients (( \lambda \sum \beta_j^2 )).
+
+```{r}
+
+library(glmnet)
+
+# Prepare data for glmnet
+x <- model.matrix(y ~ x1 + x2 + I(x1 * x2) + I(x1^2), data)[, -1]  # Remove intercept
+y <- data$y
+
+# Fit Ridge Regression
+ridge_model <- glmnet(x, y, alpha = 0)  # alpha = 0 for Ridge
+plot(ridge_model, xvar = "lambda", label = TRUE)  # Plot coefficient paths
+```
+
+
+Interpretation:
+	•	The plot shows how coefficients shrink as ( \lambda ) increases.
+	•	Ridge is useful when multicollinearity is present or to stabilize coefficients.
+
+### Lasso Regression
+
+Lasso regression minimizes the sum of squared residuals with a penalty proportional to the sum of absolute coefficients $\lambda \sum |\beta_j|$
+
+```{r}
+
+# Fit Lasso Regression
+lasso_model <- glmnet(x, y, alpha = 1)  # alpha = 1 for Lasso
+plot(lasso_model, xvar = "lambda", label = TRUE)  # Plot coefficient paths
+```
+
+Interpretation:
+	•	Lasso can shrink some coefficients to exactly zero, effectively performing variable selection.
+
+## Choosing Optimal $\lambda$ Using Cross-Validation
+
+
+```{r}
+# Ridge Cross-Validation
+ridge_cv <- cv.glmnet(x, y, alpha = 0)  # Ridge
+best_lambda_ridge <- ridge_cv$lambda.min
+cat("Best Lambda for Ridge:", best_lambda_ridge, "\n")
+
+# Lasso Cross-Validation
+lasso_cv <- cv.glmnet(x, y, alpha = 1)  # Lasso
+best_lambda_lasso <- lasso_cv$lambda.min
+cat("Best Lambda for Lasso:", best_lambda_lasso, "\n")
+```
+
+Interpretation:
+	•	cv.glmnet finds the optimal ( \lambda ) using cross-validation.
+	•	Use the best ( \lambda ) to refit the Ridge or Lasso model for predictions.
+
+## Comparison of Models
+
+
+```{r}
+# Refit models with optimal lambda
+ridge_final <- glmnet(x, y, alpha = 0, lambda = best_lambda_ridge)
+lasso_final <- glmnet(x, y, alpha = 1, lambda = best_lambda_lasso)
+
+# Coefficients for Ridge and Lasso
+coef_ridge <- coef(ridge_final)
+coef_lasso <- coef(lasso_final)
+
+cat("Ridge Coefficients:\n")
+print(coef_ridge)
+cat("Lasso Coefficients:\n")
+print(coef_lasso)
+```
+
+Interpretation:
+
+- Compare the coefficients from Ridge and Lasso with those from the unregularized linear model.
+- Ridge retains all variables, but shrinks coefficients. Lasso may set some coefficients to zero.
+
+## Summary
+
+| Model         | Key Feature                                             | Use Case                                   |
+|---------------|---------------------------------------------------------|-------------------------------------------|
+| Linear Model  | Includes interactions and polynomials.                  | Explains relationships between variables. |
+| Ridge         | Shrinks coefficients toward zero; no variable elimination. | Addresses multicollinearity or overfitting. |
+| Lasso         | Shrinks coefficients, can eliminate variables.          | Performs variable selection and regularization. |

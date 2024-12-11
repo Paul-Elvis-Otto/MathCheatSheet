@@ -153,6 +153,21 @@ window.Quarto = {
   <li><a href="#combined-code-for-simulation" id="toc-combined-code-for-simulation" class="nav-link" data-scroll-target="#combined-code-for-simulation">Combined Code for Simulation</a></li>
   <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a></li>
   </ul></li>
+  <li><a href="#linear-regression-models-and-regularization" id="toc-linear-regression-models-and-regularization" class="nav-link" data-scroll-target="#linear-regression-models-and-regularization">Linear Regression Models and Regularization</a>
+  <ul class="collapse">
+  <li><a href="#generating-simulated-data-1" id="toc-generating-simulated-data-1" class="nav-link" data-scroll-target="#generating-simulated-data-1">1. Generating Simulated Data</a>
+  <ul class="collapse">
+  <li><a href="#code-1" id="toc-code-1" class="nav-link" data-scroll-target="#code-1">Code:</a></li>
+  </ul></li>
+  <li><a href="#fitting-a-linear-regression-model" id="toc-fitting-a-linear-regression-model" class="nav-link" data-scroll-target="#fitting-a-linear-regression-model">Fitting a Linear Regression Model</a></li>
+  <li><a href="#adding-regularization-ridge-and-lasso" id="toc-adding-regularization-ridge-and-lasso" class="nav-link" data-scroll-target="#adding-regularization-ridge-and-lasso">Adding Regularization: Ridge and Lasso</a>
+  <ul class="collapse">
+  <li><a href="#lasso-regression" id="toc-lasso-regression" class="nav-link" data-scroll-target="#lasso-regression">Lasso Regression</a></li>
+  </ul></li>
+  <li><a href="#choosing-optimal-lambda-using-cross-validation" id="toc-choosing-optimal-lambda-using-cross-validation" class="nav-link" data-scroll-target="#choosing-optimal-lambda-using-cross-validation">Choosing Optimal <span class="math inline">\(\lambda\)</span> Using Cross-Validation</a></li>
+  <li><a href="#comparison-of-models" id="toc-comparison-of-models" class="nav-link" data-scroll-target="#comparison-of-models">Comparison of Models</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -179,7 +194,7 @@ window.Quarto = {
 
 <section id="hello" class="level1">
 <h1>Hello!</h1>
-<p>This is the unofficial math for data science cheat sheet at the Hertie School</p>
+<p>This is the unofficial math for data science cheat sheet</p>
 </section>
 <section id="the-basics" class="level1">
 <h1>The basics</h1>
@@ -633,6 +648,216 @@ y = \beta_0 + \beta_1 x + \epsilon
 <li>Simulation Distribution: The distribution of the simulated means approximates the theoretical mean and variance.</li>
 <li>Practical Applications: This technique is useful for hypothesis testing, bootstrapping, and exploring variability in statistical models.</li>
 </ul>
+</section>
+</section>
+<section id="linear-regression-models-and-regularization" class="level1">
+<h1>Linear Regression Models and Regularization</h1>
+<p>This document demonstrates how to fit linear regression models (including interaction and polynomial terms) and perform Lasso and Ridge regularization.</p>
+<section id="generating-simulated-data-1" class="level2">
+<h2 class="anchored" data-anchor-id="generating-simulated-data-1">1. Generating Simulated Data</h2>
+<p>We simulate a dataset based on the following model: <span class="math display">\[
+y = 2 + 1.5x_1 - 2x_2 + 0.8x_1x_2 + 1.2x_1^2 + \epsilon
+\]</span> where:</p>
+<ul>
+<li><span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> are predictors drawn from <span class="math inline">\(N(0, 1)\)</span></li>
+<li><span class="math inline">\(\epsilon \sim N(0, 1)\)</span> is random noise.</li>
+</ul>
+<section id="code-1" class="level3">
+<h3 class="anchored" data-anchor-id="code-1">Code:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate data</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>epsilon <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> x1 <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> x2 <span class="sc">+</span> <span class="fl">0.8</span> <span class="sc">*</span> x1 <span class="sc">*</span> x2 <span class="sc">+</span> <span class="fl">1.2</span> <span class="sc">*</span> x1<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> epsilon</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(y, x1, x2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="fitting-a-linear-regression-model" class="level2">
+<h2 class="anchored" data-anchor-id="fitting-a-linear-regression-model">Fitting a Linear Regression Model</h2>
+<p>We include interaction <span class="math inline">\(x_1x_2\)</span> and polynomial <span class="math inline">\(x_1^2\)</span> terms in the regression.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit linear model with interactions and polynomials</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> <span class="fu">I</span>(x1 <span class="sc">*</span> x2) <span class="sc">+</span> <span class="fu">I</span>(x1<span class="sc">^</span><span class="dv">2</span>), <span class="at">data =</span> data)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print summary of the model</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x1 + x2 + I(x1 * x2) + I(x1^2), data = data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.83199 -0.57590  0.07052  0.63371  2.37411 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  1.99355    0.08435   23.64   &lt;2e-16 ***
+x1           1.45204    0.07625   19.04   &lt;2e-16 ***
+x2          -2.05802    0.06973  -29.51   &lt;2e-16 ***
+I(x1 * x2)   0.80496    0.07392   10.89   &lt;2e-16 ***
+I(x1^2)      1.24563    0.05519   22.57   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.9711 on 195 degrees of freedom
+Multiple R-squared:  0.9198,    Adjusted R-squared:  0.9182 
+F-statistic: 559.2 on 4 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Interpretation: • Look at the coefficients to assess the relationship between predictors and the response. • The ( R^2 ) value shows how much variance is explained by the model.</p>
+</section>
+<section id="adding-regularization-ridge-and-lasso" class="level2">
+<h2 class="anchored" data-anchor-id="adding-regularization-ridge-and-lasso">Adding Regularization: Ridge and Lasso</h2>
+<p>For regularized regression, we use the glmnet package.</p>
+<p>Ridge Regression</p>
+<p>Ridge regression minimizes the sum of squared residuals with an added penalty proportional to the sum of squared coefficients (( _j^2 )).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: Matrix</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loaded glmnet 4.1-8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare data for glmnet</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> <span class="fu">I</span>(x1 <span class="sc">*</span> x2) <span class="sc">+</span> <span class="fu">I</span>(x1<span class="sc">^</span><span class="dv">2</span>), data)[, <span class="sc">-</span><span class="dv">1</span>]  <span class="co"># Remove intercept</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> data<span class="sc">$</span>y</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit Ridge Regression</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>ridge_model <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(x, y, <span class="at">alpha =</span> <span class="dv">0</span>)  <span class="co"># alpha = 0 for Ridge</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ridge_model, <span class="at">xvar =</span> <span class="st">"lambda"</span>, <span class="at">label =</span> <span class="cn">TRUE</span>)  <span class="co"># Plot coefficient paths</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Interpretation: • The plot shows how coefficients shrink as ( ) increases. • Ridge is useful when multicollinearity is present or to stabilize coefficients.</p>
+<section id="lasso-regression" class="level3">
+<h3 class="anchored" data-anchor-id="lasso-regression">Lasso Regression</h3>
+<p>Lasso regression minimizes the sum of squared residuals with a penalty proportional to the sum of absolute coefficients <span class="math inline">\(\lambda \sum |\beta_j|\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit Lasso Regression</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>lasso_model <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(x, y, <span class="at">alpha =</span> <span class="dv">1</span>)  <span class="co"># alpha = 1 for Lasso</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lasso_model, <span class="at">xvar =</span> <span class="st">"lambda"</span>, <span class="at">label =</span> <span class="cn">TRUE</span>)  <span class="co"># Plot coefficient paths</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Interpretation: • Lasso can shrink some coefficients to exactly zero, effectively performing variable selection.</p>
+</section>
+</section>
+<section id="choosing-optimal-lambda-using-cross-validation" class="level2">
+<h2 class="anchored" data-anchor-id="choosing-optimal-lambda-using-cross-validation">Choosing Optimal <span class="math inline">\(\lambda\)</span> Using Cross-Validation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ridge Cross-Validation</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>ridge_cv <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(x, y, <span class="at">alpha =</span> <span class="dv">0</span>)  <span class="co"># Ridge</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>best_lambda_ridge <span class="ot">&lt;-</span> ridge_cv<span class="sc">$</span>lambda.min</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Best Lambda for Ridge:"</span>, best_lambda_ridge, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Best Lambda for Ridge: 0.1950984 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lasso Cross-Validation</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>lasso_cv <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(x, y, <span class="at">alpha =</span> <span class="dv">1</span>)  <span class="co"># Lasso</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>best_lambda_lasso <span class="ot">&lt;-</span> lasso_cv<span class="sc">$</span>lambda.min</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Best Lambda for Lasso:"</span>, best_lambda_lasso, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Best Lambda for Lasso: 0.01169584 </code></pre>
+</div>
+</div>
+<p>Interpretation: • cv.glmnet finds the optimal ( ) using cross-validation. • Use the best ( ) to refit the Ridge or Lasso model for predictions.</p>
+</section>
+<section id="comparison-of-models" class="level2">
+<h2 class="anchored" data-anchor-id="comparison-of-models">Comparison of Models</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Refit models with optimal lambda</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>ridge_final <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(x, y, <span class="at">alpha =</span> <span class="dv">0</span>, <span class="at">lambda =</span> best_lambda_ridge)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>lasso_final <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(x, y, <span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">lambda =</span> best_lambda_lasso)</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Coefficients for Ridge and Lasso</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>coef_ridge <span class="ot">&lt;-</span> <span class="fu">coef</span>(ridge_final)</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>coef_lasso <span class="ot">&lt;-</span> <span class="fu">coef</span>(lasso_final)</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Ridge Coefficients:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Ridge Coefficients:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(coef_ridge)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>5 x 1 sparse Matrix of class "dgCMatrix"
+                    s0
+(Intercept)  2.0477138
+x1           1.3998610
+x2          -1.9375341
+I(x1 * x2)   0.7876673
+I(x1^2)      1.1776864</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Lasso Coefficients:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Lasso Coefficients:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(coef_lasso)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>5 x 1 sparse Matrix of class "dgCMatrix"
+                    s0
+(Intercept)  1.9996038
+x1           1.4442504
+x2          -2.0453655
+I(x1 * x2)   0.7963225
+I(x1^2)      1.2378548</code></pre>
+</div>
+</div>
+<p>Interpretation:</p>
+<ul>
+<li>Compare the coefficients from Ridge and Lasso with those from the unregularized linear model.</li>
+<li>Ridge retains all variables, but shrinks coefficients. Lasso may set some coefficients to zero.</li>
+</ul>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 49%">
+<col style="width: 37%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Key Feature</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Linear Model</td>
+<td>Includes interactions and polynomials.</td>
+<td>Explains relationships between variables.</td>
+</tr>
+<tr class="even">
+<td>Ridge</td>
+<td>Shrinks coefficients toward zero; no variable elimination.</td>
+<td>Addresses multicollinearity or overfitting.</td>
+</tr>
+<tr class="odd">
+<td>Lasso</td>
+<td>Shrinks coefficients, can eliminate variables.</td>
+<td>Performs variable selection and regularization.</td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 
