@@ -4,10 +4,413 @@ format: html
 execute:
   freeze: auto
 output-dir: docs
+toc: true
 ---
 # Hello!
 This is the unofficial math for data science cheat sheet at the Hertie School
 
 
 # The basics
+
+
+
+
+Here’s the cheat sheet for understanding the summary() function and interpreting its output when applied to a linear model (lm).
+
+---
+title: "Cheat Sheet: Understanding `summary()` for `lm` Models"
+output: html_document
+---
+
+# `summary()` for Linear Models in R
+
+The `summary()` function is a powerful tool for summarizing linear models (`lm`). This cheat sheet explains the key components of the `summary()` output and how to interpret them.
+
+
+
+### Syntax:
+```{{R}}
+summary(lm_model)
+```
+
+### Example:
+
+```{r}
+# Fit a simple linear regression model
+data(mtcars)
+lm_model <- lm(mpg ~ hp, data = mtcars)
+
+# Get the summary
+summary(lm_model)
+```
+
+## Key Sections in `summary()` Output
+
+### (a) Call
+
+The first line repeats the formula used in the model:
+
+Call:
+lm(formula = mpg ~ hp, data = mtcars)
+
+	•	Interpretation: Indicates that mpg (miles per gallon) is the response variable and hp (horsepower) is the predictor.
+
+### (b) Residuals
+
+A summary of the residuals (errors between observed and predicted values):
+
+Residuals:
+    Min      1Q  Median      3Q     Max
+-5.7121 -2.1122 -0.8854  1.5819  8.2360
+
+	•	Min, 1Q, Median, 3Q, Max:
+	•	These represent the spread of residuals.
+	•	Ideally, the median should be close to 0, and residuals should be symmetrically distributed around 0.
+	•	Large residuals (outliers) can indicate poor model fit.
+
+### (c) Coefficients
+
+The most important section of the output:
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept) 30.09886    1.63392  18.421  < 2e-16 ***
+hp          -0.06823    0.01012  -6.742 1.79e-07 ***
+
+Columns:
+	1.	Estimate:
+	•	The fitted coefficients for the intercept and predictors:
+	•	Intercept: 30.09886 (predicted mpg when hp = 0).
+	•	Slope for hp: -0.06823 (for every 1-unit increase in hp, mpg decreases by ~0.06823).
+	2.	Std. Error:
+	•	The standard error of the coefficient estimates, which measures their variability.
+	•	Smaller standard errors indicate more precise estimates.
+	3.	t value:
+	•	( t )-statistic for testing if the coefficient is significantly different from 0:
+[
+t = \frac{\text{Estimate}}{\text{Std. Error}}
+]
+	4.	Pr(>|t|):
+	•	The p-value for the null hypothesis (( H_0: \beta = 0 )).
+	•	Smaller values (< 0.05) indicate that the predictor is statistically significant.
+	5.	Significance Codes:
+	•	Indicate the strength of the p-value:
+
+‘***’ < 0.001, ‘**’ < 0.01, ‘*’ < 0.05
+
+
+	•	In this example, both the intercept and hp are highly significant.
+
+### (d) Residual Standard Error
+
+Residual standard error: 3.863 on 30 degrees of freedom
+
+	•	Measures the typical size of residuals (in units of the response variable).
+	•	Smaller values indicate a better fit.
+
+### (e) ( R^2 ) and Adjusted ( R^2 )
+
+Multiple R-squared:  0.6024,    Adjusted R-squared:  0.5892
+
+	1.	( R^2 ):
+	•	Proportion of variance in the response variable (mpg) explained by the predictor (hp).
+	•	Here, ( R^2 = 0.6024 ), meaning ~60.24% of the variance in mpg is explained by hp.
+	2.	Adjusted ( R^2 ):
+	•	Adjusted for the number of predictors in the model.
+	•	Penalizes adding unnecessary predictors.
+
+### (f) F-Statistic
+
+F-statistic: 45.46 on 1 and 30 DF,  p-value: 1.788e-07
+
+	•	Tests the null hypothesis that all coefficients (except the intercept) are 0.
+	•	Large ( F )-values and small p-values indicate a good overall fit.
+	•	Degrees of Freedom: Indicates the number of predictors (1) and residual degrees of freedom (30).
+
+## How to Interpret Results
+	1.	Significance of Predictors:
+	•	Look at the p-values (Pr(>|t|)) for each coefficient.
+	•	If ( p < 0.05 ), the predictor is statistically significant.
+	2.	Model Fit:
+	•	Check ( R^2 ) and Adjusted ( R^2 ):
+	•	Higher values indicate better fit.
+	3.	Residuals:
+	•	Ensure residuals are symmetrically distributed around 0 and have small variability.
+	4.	Practical Significance:
+	•	Even if a predictor is statistically significant, check its effect size (Estimate).
+
+Example Code
+
+```{r}
+# Load dataset
+data(mtcars)
+
+# Fit linear model
+lm_model <- lm(mpg ~ hp, data = mtcars)
+
+# Get summary
+summary(lm_model)
+```
+
+
+
+
+
+
+Here’s a cheat sheet for plotting variables in R, covering density plots, histograms, and bivariate relationships:
+
+
+# Plotting Variables in R
+
+
+## 1. Plotting a Density Curve
+
+Density plots visualize the distribution of a continuous variable.
+
+### **Syntax**
+
+```r
+plot(density(variable), main = "Density Plot", xlab = "Variable", ylab = "Density")
+```
+
+### Example
+
+```{r}
+# Example data
+set.seed(1)
+data <- rnorm(100)
+
+# Density plot
+plot(density(data),
+     main = "Density Plot of Data",
+     xlab = "Value",
+     ylab = "Density",
+     col = "blue",
+     lwd = 2)
+```
+
+## Plotting a Histogram
+
+Histograms represent the frequency distribution of a continuous variable.
+
+### Syntax
+```{{r}}
+hist(variable, breaks = n, main = "Histogram", xlab = "Variable", col = "color")
+```
+
+### Example
+
+```{r}
+# Histogram
+hist(data,
+     breaks = 10,  # Number of bins
+     main = "Histogram of Data",
+     xlab = "Value",
+     col = "lightblue",
+     border = "black")
+```
+
+## Scatterplot with a Fitted Line or Curve
+
+Scatterplots show the relationship between two variables. Adding a line or curve highlights the trend.
+
+### syntax
+
+```{{r}}
+plot(x, y, main = "Scatterplot", xlab = "X", ylab = "Y", pch = 19)
+```
+
+
+4. Combined Example
+
+Below is an example showing how to create all three plots for a dataset.
+
+```{r}
+# Generate example data
+set.seed(123)
+x <- rnorm(100)
+y <- 2 + 1.5 * x + rnorm(100, sd = 1)
+
+# (1) Density Plot
+plot(density(x),
+     main = "Density Plot of X",
+     xlab = "X",
+     col = "blue",
+     lwd = 2)
+
+# (2) Histogram
+hist(x,
+     breaks = 10,
+     main = "Histogram of X",
+     xlab = "X",
+     col = "lightblue",
+     border = "black")
+
+# (3) Scatterplot with Fitted Line
+plot(x, y,
+     main = "Scatterplot with Fitted Line",
+     xlab = "X",
+     ylab = "Y",
+     pch = 19,
+     col = "blue")
+abline(lm(y ~ x), col = "red", lwd = 2)
+
+```
+
+
+# Simulating Data and Creating a Simulation Distribution
+
+In this document, we simulate data from a linear model, use a loop to calculate a quantity of interest (e.g., the mean of the response variable), and create a simulation distribution from repeated iterations.
+
+
+
+## Generating Simulated Data
+
+We generate data using the following linear model:
+$$
+y = \beta_0 + \beta_1 x + \epsilon
+$$
+
+where:
+
+- $x \sim N(0, 1)$
+
+- $\epsilon \sim N(0, \sigma^2)$
+
+### **Code**
+
+```{r}
+set.seed(123)  # For reproducibility
+
+# Parameters
+n <- 100                 # Number of observations
+beta_0 <- 2              # Intercept
+beta_1 <- 1.5            # Slope
+sigma <- 1               # Standard deviation of noise
+
+# Generate data
+x <- rnorm(n, mean = 0, sd = 1)  # Predictor variable
+epsilon <- rnorm(n, mean = 0, sd = sigma)  # Random noise
+y <- beta_0 + beta_1 * x + epsilon         # Response variable
+
+# Create a data frame
+data <- data.frame(x = x, y = y)
+
+# Plot the simulated data
+plot(data$x, data$y,
+     main = "Simulated Data",
+     xlab = "X",
+     ylab = "Y",
+     pch = 19,
+     col = "blue")
+abline(a = beta_0, b = beta_1, col = "red", lwd = 2)  # True line
+```
+
+
+## Simulation: Mean of the Response Variable
+
+Now, we will simulate 1000 datasets based on the same model and compute the mean of ( y ) for each dataset. This will generate a distribution of the mean of ( y ).
+
+```{r}
+set.seed(123)
+
+# Simulation parameters
+num_simulations <- 1000
+n <- 100
+beta_0 <- 2
+beta_1 <- 1.5
+sigma <- 1
+
+# Storage for means
+y_means <- numeric(num_simulations)
+
+# Simulation loop
+for (i in 1:num_simulations) {
+  # Generate x and epsilon
+  x <- rnorm(n, mean = 0, sd = 1)
+  epsilon <- rnorm(n, mean = 0, sd = sigma)
+  
+  # Generate y
+  y <- beta_0 + beta_1 * x + epsilon
+  
+  # Compute and store the mean of y
+  y_means[i] <- mean(y)
+}
+
+# Plot the simulation distribution
+hist(y_means,
+     breaks = 30,
+     main = "Simulation Distribution of Mean of Y",
+     xlab = "Mean of Y",
+     col = "lightblue",
+     border = "black")
+
+```
+
+## Analyzing the Simulation Distribution
+
+We calculate key statistics of the simulation distribution (mean and standard deviation) and compare them to theoretical expectations.
+
+```{r}
+
+# Summary statistics
+simulated_mean <- mean(y_means)
+simulated_sd <- sd(y_means)
+
+# Print results
+cat("Simulated Mean of Y:", simulated_mean, "\n")
+cat("Simulated SD of Y:", simulated_sd, "\n")
+
+# Compare to theoretical mean and standard deviation
+theoretical_mean <- beta_0
+theoretical_sd <- sigma / sqrt(n)
+
+cat("Theoretical Mean of Y:", theoretical_mean, "\n")
+cat("Theoretical SD of Y:", theoretical_sd, "\n")
+```
+
+
+
+## Combined Code for Simulation
+
+```{r}
+# Set parameters
+set.seed(123)
+num_simulations <- 1000
+n <- 100
+beta_0 <- 2
+beta_1 <- 1.5
+sigma <- 1
+
+# Storage for means
+y_means <- numeric(num_simulations)
+
+# Simulation loop
+for (i in 1:num_simulations) {
+  x <- rnorm(n, mean = 0, sd = 1)
+  epsilon <- rnorm(n, mean = 0, sd = sigma)
+  y <- beta_0 + beta_1 * x + epsilon
+  y_means[i] <- mean(y)
+}
+
+# Plot simulation distribution
+hist(y_means,
+     breaks = 30,
+     main = "Simulation Distribution of Mean of Y",
+     xlab = "Mean of Y",
+     col = "lightblue",
+     border = "black")
+
+# Calculate and print statistics
+cat("Simulated Mean of Y:", mean(y_means), "\n")
+cat("Simulated SD of Y:", sd(y_means), "\n")
+cat("Theoretical Mean of Y:", beta_0, "\n")
+cat("Theoretical SD of Y:", sigma / sqrt(n), "\n")
+```
+
+
+## Key Takeaways
+- Simulation Loop: Use a for loop to repeat the simulation and calculate quantities of interest (e.g., the mean of ( y )).
+- Simulation Distribution: The distribution of the simulated means approximates the theoretical mean and variance.
+- Practical Applications: This technique is useful for hypothesis testing, bootstrapping, and exploring variability in statistical models.
 
