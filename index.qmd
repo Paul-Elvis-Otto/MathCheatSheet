@@ -7,20 +7,13 @@ output-dir: docs
 toc: true
 ---
 # Hello!
-This is the unofficial math for data science cheat sheet at the Hertie School
+This is the unofficial math for data science cheat sheet
 
 
 # The basics
 
 
 
-
-Here’s the cheat sheet for understanding the summary() function and interpreting its output when applied to a linear model (lm).
-
----
-title: "Cheat Sheet: Understanding `summary()` for `lm` Models"
-output: html_document
----
 
 # `summary()` for Linear Models in R
 
