@@ -162,11 +162,35 @@ window.Quarto = {
   <li><a href="#fitting-a-linear-regression-model" id="toc-fitting-a-linear-regression-model" class="nav-link" data-scroll-target="#fitting-a-linear-regression-model">Fitting a Linear Regression Model</a></li>
   <li><a href="#adding-regularization-ridge-and-lasso" id="toc-adding-regularization-ridge-and-lasso" class="nav-link" data-scroll-target="#adding-regularization-ridge-and-lasso">Adding Regularization: Ridge and Lasso</a>
   <ul class="collapse">
+  <li><a href="#ridge-regression" id="toc-ridge-regression" class="nav-link" data-scroll-target="#ridge-regression">Ridge Regression</a></li>
   <li><a href="#lasso-regression" id="toc-lasso-regression" class="nav-link" data-scroll-target="#lasso-regression">Lasso Regression</a></li>
   </ul></li>
   <li><a href="#choosing-optimal-lambda-using-cross-validation" id="toc-choosing-optimal-lambda-using-cross-validation" class="nav-link" data-scroll-target="#choosing-optimal-lambda-using-cross-validation">Choosing Optimal <span class="math inline">\(\lambda\)</span> Using Cross-Validation</a></li>
   <li><a href="#comparison-of-models" id="toc-comparison-of-models" class="nav-link" data-scroll-target="#comparison-of-models">Comparison of Models</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul></li>
+  <li><a href="#matrix-operations-in-r-cheat-sheet" id="toc-matrix-operations-in-r-cheat-sheet" class="nav-link" data-scroll-target="#matrix-operations-in-r-cheat-sheet">Matrix Operations in R Cheat Sheet</a>
+  <ul class="collapse">
+  <li><a href="#creating-a-matrix" id="toc-creating-a-matrix" class="nav-link" data-scroll-target="#creating-a-matrix">1. Creating a Matrix</a>
+  <ul class="collapse">
+  <li><a href="#using-matrix" id="toc-using-matrix" class="nav-link" data-scroll-target="#using-matrix"><strong>Using <code>matrix()</code></strong></a></li>
+  </ul></li>
+  <li><a href="#checking-dimensions" id="toc-checking-dimensions" class="nav-link" data-scroll-target="#checking-dimensions">checking dimensions</a>
+  <ul class="collapse">
+  <li><a href="#useful-functions" id="toc-useful-functions" class="nav-link" data-scroll-target="#useful-functions">Useful Functions</a></li>
+  </ul></li>
+  <li><a href="#matrix-addition-and-subtraction" id="toc-matrix-addition-and-subtraction" class="nav-link" data-scroll-target="#matrix-addition-and-subtraction">Matrix Addition and Subtraction</a></li>
+  <li><a href="#matrix-multiplication" id="toc-matrix-multiplication" class="nav-link" data-scroll-target="#matrix-multiplication">Matrix Multiplication</a>
+  <ul class="collapse">
+  <li><a href="#element-wise-multiplication" id="toc-element-wise-multiplication" class="nav-link" data-scroll-target="#element-wise-multiplication">Element-Wise Multiplication</a></li>
+  <li><a href="#example-of-matrix-multiplication" id="toc-example-of-matrix-multiplication" class="nav-link" data-scroll-target="#example-of-matrix-multiplication">Example of matrix multiplication</a></li>
+  </ul></li>
+  <li><a href="#transpose-of-a-matrix" id="toc-transpose-of-a-matrix" class="nav-link" data-scroll-target="#transpose-of-a-matrix">Transpose of a Matrix</a></li>
+  </ul></li>
+  <li><a href="#transpose-matrix-a" id="toc-transpose-matrix-a" class="nav-link" data-scroll-target="#transpose-matrix-a">Transpose matrix A</a>
+  <ul class="collapse">
+  <li><a href="#inverse-of-a-matrix" id="toc-inverse-of-a-matrix" class="nav-link" data-scroll-target="#inverse-of-a-matrix">Inverse of a Matrix</a></li>
+  <li><a href="#combined-example" id="toc-combined-example" class="nav-link" data-scroll-target="#combined-example">Combined Example</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -710,13 +734,14 @@ Multiple R-squared:  0.9198,    Adjusted R-squared:  0.9182
 F-statistic: 559.2 on 4 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
-<p>Interpretation: • Look at the coefficients to assess the relationship between predictors and the response. • The ( R^2 ) value shows how much variance is explained by the model.</p>
+<p><strong>Interpretation:</strong> - Look at the coefficients to assess the relationship between predictors and the response. - The <span class="math inline">\(R^2\)</span> value shows how much variance is explained by the model.</p>
 </section>
 <section id="adding-regularization-ridge-and-lasso" class="level2">
 <h2 class="anchored" data-anchor-id="adding-regularization-ridge-and-lasso">Adding Regularization: Ridge and Lasso</h2>
-<p>For regularized regression, we use the glmnet package.</p>
-<p>Ridge Regression</p>
-<p>Ridge regression minimizes the sum of squared residuals with an added penalty proportional to the sum of squared coefficients (( _j^2 )).</p>
+<p>For regularized regression, we use the <code>glmnet</code> package.</p>
+<section id="ridge-regression" class="level3">
+<h3 class="anchored" data-anchor-id="ridge-regression">Ridge Regression</h3>
+<p>Ridge regression minimizes the sum of squared residuals with an added penalty proportional to the sum of squared coefficients <span class="math inline">\(\lambda \sum \beta_j^2\)</span>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -740,7 +765,12 @@ F-statistic: 559.2 on 4 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div>
-<p>Interpretation: • The plot shows how coefficients shrink as ( ) increases. • Ridge is useful when multicollinearity is present or to stabilize coefficients.</p>
+<p><strong>Interpretation:</strong></p>
+<ul>
+<li><p>The plot shows how coefficients shrink as <span class="math inline">\(\lambda\)</span> increases.</p></li>
+<li><p>Ridge is useful when multicollinearity is present or to stabilize coefficients.</p></li>
+</ul>
+</section>
 <section id="lasso-regression" class="level3">
 <h3 class="anchored" data-anchor-id="lasso-regression">Lasso Regression</h3>
 <p>Lasso regression minimizes the sum of squared residuals with a penalty proportional to the sum of absolute coefficients <span class="math inline">\(\lambda \sum |\beta_j|\)</span></p>
@@ -756,7 +786,10 @@ F-statistic: 559.2 on 4 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div>
-<p>Interpretation: • Lasso can shrink some coefficients to exactly zero, effectively performing variable selection.</p>
+<p><strong>Interpretation:</strong></p>
+<ul>
+<li>Lasso can shrink some coefficients to exactly zero, effectively performing variable selection.</li>
+</ul>
 </section>
 </section>
 <section id="choosing-optimal-lambda-using-cross-validation" class="level2">
@@ -777,7 +810,11 @@ F-statistic: 559.2 on 4 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
 <pre><code>Best Lambda for Lasso: 0.01169584 </code></pre>
 </div>
 </div>
-<p>Interpretation: • cv.glmnet finds the optimal ( ) using cross-validation. • Use the best ( ) to refit the Ridge or Lasso model for predictions.</p>
+<p><strong>Interpretation:</strong></p>
+<ul>
+<li><p><code>cv.glmnet</code> finds the optimal <span class="math inline">\(\lambda\)</span> using cross-validation.</p></li>
+<li><p>Use the best <span class="math inline">\(\lambda\)</span> to refit the Ridge or Lasso model for predictions.</p></li>
+</ul>
 </section>
 <section id="comparison-of-models" class="level2">
 <h2 class="anchored" data-anchor-id="comparison-of-models">Comparison of Models</h2>
@@ -819,10 +856,10 @@ I(x1 * x2)   0.7963225
 I(x1^2)      1.2378548</code></pre>
 </div>
 </div>
-<p>Interpretation:</p>
+<p><strong>Interpretation:</strong></p>
 <ul>
-<li>Compare the coefficients from Ridge and Lasso with those from the unregularized linear model.</li>
-<li>Ridge retains all variables, but shrinks coefficients. Lasso may set some coefficients to zero.</li>
+<li><p>Compare the coefficients from Ridge and Lasso with those from the unregularized linear model.</p></li>
+<li><p>Ridge retains all variables, but shrinks coefficients. Lasso may set some coefficients to zero.</p></li>
 </ul>
 </section>
 <section id="summary" class="level2">
@@ -855,6 +892,368 @@ I(x1^2)      1.2378548</code></pre>
 <td>Lasso</td>
 <td>Shrinks coefficients, can eliminate variables.</td>
 <td>Performs variable selection and regularization.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="matrix-operations-in-r-cheat-sheet" class="level1">
+<h1>Matrix Operations in R Cheat Sheet</h1>
+<p>This cheat sheet covers essential matrix operations in R, including creating matrices, checking dimensions, and performing common operations like addition, multiplication, transpose, and inverse.</p>
+<section id="creating-a-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-matrix">1. Creating a Matrix</h2>
+<section id="using-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="using-matrix"><strong>Using <code>matrix()</code></strong></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a 2x3 matrix</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    1    2    3
+[2,]    4    5    6</code></pre>
+</div>
+</div>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>matrix()</code></td>
+<td>Creates a matrix</td>
+<td><code>matrix(1:6, nrow = 2)</code></td>
+</tr>
+<tr class="even">
+<td><code>rbind()</code></td>
+<td>Binds rows to form a matrix</td>
+<td><code>rbind(c(1, 2), c(3, 4))</code></td>
+</tr>
+<tr class="odd">
+<td><code>cbind()</code></td>
+<td>Binds columns to form a matrix</td>
+<td><code>cbind(c(1, 3), c(2, 4))</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="checking-dimensions" class="level2">
+<h2 class="anchored" data-anchor-id="checking-dimensions">checking dimensions</h2>
+<section id="useful-functions" class="level3">
+<h3 class="anchored" data-anchor-id="useful-functions">Useful Functions</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>dim()</code></td>
+<td>Dimensions of the matrix</td>
+<td><code>dim(A)</code></td>
+</tr>
+<tr class="even">
+<td><code>nrow()</code></td>
+<td>Number of rows</td>
+<td><code>nrow(A)</code></td>
+</tr>
+<tr class="odd">
+<td><code>ncol()</code></td>
+<td>Number of columns</td>
+<td><code>ncol(A)</code></td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(A)       <span class="co"># Dimensions of matrix A</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(A)      <span class="co"># Number of rows in A</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(A)      <span class="co"># Number of columns in A</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="matrix-addition-and-subtraction" class="level2">
+<h2 class="anchored" data-anchor-id="matrix-addition-and-subtraction">Matrix Addition and Subtraction</h2>
+<p><strong>Rules</strong> Matrices must have the same dimensions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create two matrices</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">3</span>)</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>A <span class="sc">+</span> B  <span class="co"># Matrix addition</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    7    6    5
+[2,]    9    8    7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>A <span class="sc">-</span> B  <span class="co"># Matrix subtraction</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]   -5   -2    1
+[2,]   -1    2    5</code></pre>
+</div>
+</div>
+</section>
+<section id="matrix-multiplication" class="level2">
+<h2 class="anchored" data-anchor-id="matrix-multiplication">Matrix Multiplication</h2>
+<section id="element-wise-multiplication" class="level3">
+<h3 class="anchored" data-anchor-id="element-wise-multiplication">Element-Wise Multiplication</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Operator</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>*</code></td>
+<td>Element-wise multiplication</td>
+<td><code>A * B</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Matrix Multiplication</strong></p>
+<ul>
+<li><p>Use <code>%*%</code> for true matrix multiplication.</p></li>
+<li><p>Ensure the number of columns in the first matrix equals the number of rows in the second.</p></li>
+</ul>
+</section>
+<section id="example-of-matrix-multiplication" class="level3">
+<h3 class="anchored" data-anchor-id="example-of-matrix-multiplication">Example of matrix multiplication</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>C <span class="sc">%*%</span> D  <span class="co"># Matrix multiplication</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]   23   31
+[2,]   34   46</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="transpose-of-a-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="transpose-of-a-matrix">Transpose of a Matrix</h2>
+<p><strong>Function</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>t()</code></td>
+<td>Transpose of a matrix</td>
+<td><code>t(A)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="transpose-matrix-a" class="level1">
+<h1>Transpose matrix A</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>transpose_A <span class="ot">&lt;-</span> <span class="fu">t</span>(A)</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(transpose_A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]    1    4
+[2,]    2    5
+[3,]    3    6</code></pre>
+</div>
+</div>
+<section id="inverse-of-a-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="inverse-of-a-matrix">Inverse of a Matrix</h2>
+<p><strong>Function</strong></p>
+<ul>
+<li><p>Use <code>solve()</code> to compute the inverse of a matrix.</p></li>
+<li><p>The matrix must be square and non-singular (determinant ≠ 0).</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a square matrix</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>E <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the inverse</span></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>inverse_E <span class="ot">&lt;-</span> <span class="fu">solve</span>(E)</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(inverse_E)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           [,1]       [,2]
+[1,]  0.6666667 -0.3333333
+[2,] -0.3333333  0.6666667</code></pre>
+</div>
+</div>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>solve()</code></td>
+<td>Computes the inverse of a matrix</td>
+<td><code>solve(E)</code></td>
+</tr>
+<tr class="even">
+<td><code>det()</code></td>
+<td>Computes the determinant of a matrix</td>
+<td><code>det(E)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="combined-example" class="level2">
+<h2 class="anchored" data-anchor-id="combined-example">Combined Example</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create two matrices</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">3</span>)</span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">3</span>)</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrix addition</span></span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>add_AB <span class="ot">&lt;-</span> A <span class="sc">+</span> B</span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrix transpose</span></span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>transpose_A <span class="ot">&lt;-</span> <span class="fu">t</span>(A)</span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a square matrix for inverse</span></span>
+<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the inverse</span></span>
+<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a>inverse_C <span class="ot">&lt;-</span> <span class="fu">solve</span>(C)</span>
+<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-17"><a href="#cb78-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Print results</span></span>
+<span id="cb78-18"><a href="#cb78-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Matrix A:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Matrix A:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    1    3    5
+[2,]    2    4    6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Matrix B:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Matrix B:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(B)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    6    4    2
+[2,]    5    3    1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">A + B:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+A + B:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(add_AB)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    7    7    7
+[2,]    7    7    7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Transpose of A:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Transpose of A:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(transpose_A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]    1    2
+[2,]    3    4
+[3,]    5    6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Inverse of C:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Inverse of C:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(inverse_C)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           [,1]       [,2]
+[1,]  0.6666667 -0.3333333
+[2,] -0.3333333  0.6666667</code></pre>
+</div>
+</div>
+<p><strong>Summary Table</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 37%">
+<col style="width: 32%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Operation</th>
+<th>Function</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Create a matrix</td>
+<td><code>matrix()</code></td>
+<td><code>matrix(1:6, nrow = 2)</code></td>
+</tr>
+<tr class="even">
+<td>Bind rows/columns</td>
+<td><code>rbind()</code>, <code>cbind()</code></td>
+<td><code>rbind(c(1, 2), c(3, 4))</code></td>
+</tr>
+<tr class="odd">
+<td>Check dimensions</td>
+<td><code>dim()</code>, <code>nrow()</code>, <code>ncol()</code></td>
+<td><code>dim(A)</code></td>
+</tr>
+<tr class="even">
+<td>Add/Subtract matrices</td>
+<td><code>+</code>, <code>-</code></td>
+<td><code>A + B</code></td>
+</tr>
+<tr class="odd">
+<td>Element-wise multiplication</td>
+<td><code>*</code></td>
+<td><code>A * B</code></td>
+</tr>
+<tr class="even">
+<td>Matrix multiplication</td>
+<td><code>%*%</code></td>
+<td><code>A %*% B</code></td>
+</tr>
+<tr class="odd">
+<td>Transpose</td>
+<td><code>t()</code></td>
+<td><code>t(A)</code></td>
+</tr>
+<tr class="even">
+<td>Inverse</td>
+<td><code>solve()</code></td>
+<td><code>solve(C)</code></td>
 </tr>
 </tbody>
 </table>
