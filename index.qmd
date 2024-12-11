@@ -1,0 +1,13 @@
+---
+title: "Math for data science R cheatsheet"
+format: html
+execute:
+  freeze: auto
+output-dir: docs
+---
+# Hello!
+This is the unofficial math for data science cheat sheet at the Hertie School
+
+
+# The basics
+
