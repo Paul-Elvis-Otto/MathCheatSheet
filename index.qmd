@@ -415,7 +415,7 @@ cat("Theoretical SD of Y:", sigma / sqrt(n), "\n")
 This document demonstrates how to fit linear regression models (including interaction and polynomial terms) and perform Lasso and Ridge regularization.
 
 
-## 1. Generating Simulated Data
+## Generating Simulated Data
 
 We simulate a dataset based on the following model:
 $$
